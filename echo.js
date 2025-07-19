@@ -3,9 +3,8 @@ import { echoConfig, accessKeys } from "./config.js";
 // 🌟 Initial personality mode
 let currentMode = echoConfig.personality;
 
-// 🚨 Strike + Ban settings
+// 🚨 Strike settings
 const MAX_STRIKES = 3;
-const BAN_DURATION_MS = 24 * 60 * 60 * 1000;
 
 // 🖥️ Select DOM elements
 const chatWindow = document.getElementById("chatWindow");
@@ -28,11 +27,6 @@ sendBtn.addEventListener("click", () => {
   const message = userInput.value.trim();
   if (!message) return;
 
-  if (isUserBanned()) {
-    appendMessage("bot", "🚷 You've been banned for 24 hours due to repeated violations. Please try again later.");
-    return;
-  }
-
   appendMessage("user", message);
   userInput.value = "";
   handleMessage(message.toLowerCase());
@@ -51,6 +45,20 @@ function appendMessage(role, text) {
 
 // 🎛️ Main response handler
 function handleMessage(message) {
+  // 🙏 Apology system — reduce one strike if user says "sorry"
+  const strikesRaw = localStorage.getItem("echoStrikes");
+  const strikes = strikesRaw ? Number(strikesRaw) : 0;
+
+  if (message.includes("sorry")) {
+    if (!isNaN(strikes) && strikes > 0) {
+      const newStrikes = strikes - 1;
+      localStorage.setItem("echoStrikes", newStrikes);
+      return appendMessage("bot", `❤️ Apology accepted. Strike count reduced to ${newStrikes}.`);
+    } else {
+      return appendMessage("bot", "😊 You're in the clear! No strikes to remove.");
+    }
+  }
+
   const keyResponse = checkForKey(message);
   if (keyResponse) return appendMessage("bot", keyResponse);
 
@@ -74,9 +82,9 @@ function checkForKey(input) {
   return null;
 }
 
-// 🚫 Language filter + Strike tracker
+// ⚠️ Language filter + Strike tracker (no ban)
 function checkForLanguage(input) {
-  const flagged = ["shit", "damn", "hell", "crap", "stupid", "idiot", "jerk", "fuck"];
+  const flagged = ["shit", "damn", "ass", "crap", "stupid", "idiot", "jerk", "fuck"];
   const strikes = Number(localStorage.getItem("echoStrikes") || 0);
 
   for (const word of flagged) {
@@ -84,25 +92,12 @@ function checkForLanguage(input) {
       const newStrikes = strikes + 1;
       localStorage.setItem("echoStrikes", newStrikes);
 
-      if (newStrikes >= MAX_STRIKES) {
-        const banUntil = Date.now() + BAN_DURATION_MS;
-        localStorage.setItem("echoBanUntil", banUntil);
-        localStorage.setItem("echoStrikes", 0);
-        return "🚫 You’ve been banned for 24 hours due to repeated violations.";
-      }
-
       const remaining = MAX_STRIKES - newStrikes;
-      return `⚠️ Please keep it respectful. You now have ${remaining} strike${remaining === 1 ? "" : "s"} left before a 24-hour ban.`;
+      return `⚠️ Please keep it respectful.`
     }
   }
 
   return null;
-}
-
-// ⛔ Ban check
-function isUserBanned() {
-  const banTime = Number(localStorage.getItem("echoBanUntil") || 0);
-  return Date.now() < banTime;
 }
 
 // 🧠 Personality-based response engine

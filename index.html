@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EchoAI Chatbot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Header styling */
+    #header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #2c2c2c;
+      color: #00e1ff;
+    }
+
+    #chatApp {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    #chatWindow {
+      background-color: #1a1a1a;
+      padding: 10px;
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #444;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      color: #eee;
+    }
+
+    #inputArea {
+      display: flex;
+      gap: 10px;
+    }
+
+    #userInput {
+      flex-grow: 1;
+      padding: 10px;
+      border-radius: 4px;
+      border: none;
+      background-color: #2c2c2c;
+      color: #eee;
+    }
+
+    #sendBtn {
+      padding: 10px 15px;
+      background-color: #00e1ff;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      color: #000;
+      cursor: pointer;
+    }
+
+    #sendBtn:hover {
+      background-color: #00c7e0;
+    }
+  </style>
+</head>
+<body>
+  <div id="header">
+    <h1>🤖 EchoAI</h1>
+  </div>
+
+  <main id="chatApp">
+    <div id="chatWindow"></div>
+
+    <div id="inputArea">
+      <input type="text" id="userInput" placeholder="Type your message and press Enter..." />
+      <button id="sendBtn">Send</button>
+    </div>
+  </main>
+
+  <!-- 🧠 EchoAI logic -->
+  <script type="module" src="echo.js"></script>
+</body>
+</html>
